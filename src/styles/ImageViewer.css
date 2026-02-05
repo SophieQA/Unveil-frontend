@@ -1,0 +1,301 @@
+/* Image Viewer Modal Styles */
+
+.image-viewer-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.2s ease-out;
+  backdrop-filter: blur(5px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.image-viewer-content {
+  position: relative;
+  width: 95%;
+  height: 95%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: rotate(90deg);
+}
+
+.close-btn:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* Viewer Controls */
+.viewer-controls {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 8px 12px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: 44px;
+}
+
+.control-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.05);
+}
+
+.control-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.zoom-btn {
+  width: 40px;
+  padding: 8px;
+  font-weight: bold;
+}
+
+.zoom-level {
+  color: #fff;
+  font-size: 13px;
+  min-width: 50px;
+  text-align: center;
+}
+
+.download-btn {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: rgba(76, 175, 80, 0.5);
+}
+
+.download-btn:hover:not(:disabled) {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: rgba(76, 175, 80, 0.8);
+}
+
+/* Image Container */
+.image-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+.viewer-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.05s ease-out;
+  user-select: none;
+  will-change: transform;
+}
+
+.viewer-image.dragging {
+  transition: none;
+}
+
+/* Info Section */
+.viewer-info {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.viewer-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.viewer-info p {
+  margin: 2px 0;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.artist {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.year {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.description {
+  margin-top: 6px !important;
+  line-height: 1.4;
+  font-size: 12px;
+}
+
+.source {
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 4px !important;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 12px 20px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .image-viewer-content {
+    width: 98%;
+    height: 98%;
+  }
+
+  .viewer-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    max-width: 160px;
+  }
+
+  .control-btn {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .zoom-btn {
+    width: 100%;
+  }
+
+  .zoom-level {
+    width: 100%;
+  }
+
+  .close-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .viewer-info {
+    max-height: 100px;
+    padding: 12px 16px;
+  }
+
+  .viewer-info h3 {
+    font-size: 16px;
+  }
+
+  .viewer-info p {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .viewer-controls {
+    left: 8px;
+    top: 8px;
+    padding: 6px 8px;
+    gap: 4px;
+  }
+
+  .close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    right: 8px;
+    top: 8px;
+  }
+
+  .control-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  .viewer-info {
+    max-height: 80px;
+    padding: 10px 12px;
+  }
+
+  .viewer-info h3 {
+    font-size: 14px;
+  }
+
+  .viewer-info p {
+    font-size: 11px;
+  }
+}
