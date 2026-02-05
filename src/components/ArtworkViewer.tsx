@@ -13,8 +13,6 @@ export function ArtworkViewer() {
     goToNext,
     canGoBack,
     canGoForward,
-    currentIndex,
-    history,
   } = useArtworkHistory();
 
   const [displayedArtwork, setDisplayedArtwork] = useState<Artwork | null>(null);
