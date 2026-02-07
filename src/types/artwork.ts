@@ -56,6 +56,9 @@ export interface FavoritesResponse {
   data?: Array<Artwork | { artwork?: Artwork } | { artworkData?: Artwork }>;
   items?: Array<Artwork | { artwork?: Artwork } | { artworkData?: Artwork }>;
   results?: Array<Artwork | { artwork?: Artwork } | { artworkData?: Artwork }>;
+  totalCount?: number;
+  currentPage?: number;
+  pageSize?: number;
   page?: number;
   limit?: number;
   total?: number;
