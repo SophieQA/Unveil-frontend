@@ -133,6 +133,44 @@
   box-shadow: 0 2px 8px rgba(255, 255, 255, 0.15);
 }
 
+.favorite-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.favorite-btn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.favorite-btn.active {
+  background: #ef4444;
+  border-color: #fff;
+  color: #fff;
+}
+
+.favorite-btn.active svg {
+  fill: #fff;
+  stroke: none;
+}
+
+.favorite-float {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 12;
+}
+
 /* Loading and Error States */
 .loading,
 .error {
