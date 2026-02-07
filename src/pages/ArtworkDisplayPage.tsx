@@ -11,6 +11,7 @@ export default function ArtworkDisplayPage() {
   const [error, setError] = useState<string | null>(null);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [isBrowsingHistory, setIsBrowsingHistory] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
   const hasLoadedInitialArtwork = useRef(false);
   const lastNavDirection = useRef<'prev' | 'next' | null>(null);
 
@@ -34,6 +35,7 @@ export default function ArtworkDisplayPage() {
       addToHistory(artwork);
       artworkAPI.recordView(artwork);
       setIsBrowsingHistory(false);
+      setIsFavorited(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load artwork');
     } finally {
@@ -54,6 +56,7 @@ export default function ArtworkDisplayPage() {
         addToHistory(artwork);
         artworkAPI.recordView(artwork);
         setIsBrowsingHistory(false);
+        setIsFavorited(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load artwork');
       } finally {
@@ -94,8 +97,33 @@ export default function ArtworkDisplayPage() {
   useEffect(() => {
     if (currentIndex >= 0 && history[currentIndex]) {
       setCurrentArtwork(history[currentIndex]);
+      setIsFavorited(false);
     }
   }, [currentIndex, history]);
+
+  const handleFavoriteToggle = useCallback(async () => {
+    if (!currentArtwork) return;
+    const favoriteKey = currentArtwork.artworkId ?? currentArtwork.id;
+    console.log('Toggling favorite:', {
+      artwork: currentArtwork,
+      favoriteKey,
+      currentState: isFavorited,
+    });
+    try {
+      if (isFavorited) {
+        await artworkAPI.removeFavorite(favoriteKey);
+        setIsFavorited(false);
+        console.log('Favorite removed successfully');
+      } else {
+        await artworkAPI.addFavorite(favoriteKey);
+        setIsFavorited(true);
+        console.log('Favorite added successfully');
+      }
+    } catch (err) {
+      console.error('Failed to update favorite:', err);
+      alert('Failed to update favorite');
+    }
+  }, [currentArtwork, isFavorited]);
 
   const handleLoad = () => {
     if (currentArtwork && bgImageRef.current) {
@@ -176,6 +204,19 @@ export default function ArtworkDisplayPage() {
           </div>
         ) : null}
       </main>
+
+      {currentArtwork && !isLoading && !error && (
+        <button
+          className={`favorite-btn favorite-float ${isFavorited ? 'active' : ''}`}
+          onClick={handleFavoriteToggle}
+          aria-label={isFavorited ? 'Remove favorite' : 'Add favorite'}
+          title={isFavorited ? 'Remove favorite' : 'Add favorite'}
+        >
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <path d="M12.1 20.3 12 20.4l-.1-.1C7.1 16 4 13.1 4 9.8 4 7.4 5.9 5.5 8.3 5.5c1.4 0 2.8.7 3.7 1.8.9-1.1 2.3-1.8 3.7-1.8 2.4 0 4.3 1.9 4.3 4.3 0 3.3-3.1 6.2-7.9 10.5Z" />
+          </svg>
+        </button>
+      )}
 
       {/* Navigation controls */}
       <nav className="controls-container">
