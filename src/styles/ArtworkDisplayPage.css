@@ -39,6 +39,10 @@
   pointer-events: none;
 }
 
+.artwork-display-page.minimal .artwork-overlay {
+  opacity: 0;
+}
+
 /* Header with Logo */
 .header {
   position: absolute;
@@ -51,6 +55,10 @@
   align-items: center;
   z-index: 10;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+}
+
+.artwork-display-page.minimal .header {
+  display: none;
 }
 
 .logo {
@@ -73,6 +81,10 @@
   text-align: center;
   width: 90%;
   max-width: 700px;
+}
+
+.artwork-display-page.minimal .main-content {
+  display: none;
 }
 
 .artwork-info {
@@ -171,6 +183,22 @@
   z-index: 12;
 }
 
+.display-mode-toggle {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 12;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+
 /* Loading and Error States */
 .loading,
 .error {
@@ -186,11 +214,12 @@
 /* Controls Container */
 .controls-container {
   position: absolute;
-  bottom: 50%;
-  left: 50%;
-  transform: translate(-50%, 50%);
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
   display: flex;
-  gap: 40px;
+  gap: 20px;
   align-items: center;
   z-index: 10;
   width: 100%;
@@ -209,20 +238,30 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.3s ease;
+  transition: none;
   flex-shrink: 0;
   backdrop-filter: blur(4px);
+  transform: none;
+  outline: none;
+  box-shadow: none;
+  filter: none;
 }
 
 .control-btn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.8);
-  transform: scale(1.1);
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  filter: none;
 }
 
 .control-btn:active:not(:disabled) {
-  transform: scale(0.95);
+  box-shadow: none;
+}
+
+.control-btn:focus,
+.control-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .control-btn:disabled {
@@ -230,14 +269,19 @@
   cursor: not-allowed;
 }
 
-.left-btn {
+.left-btn,
+.right-btn {
   position: absolute;
-  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.left-btn {
+  left: 24px;
 }
 
 .right-btn {
-  position: absolute;
-  right: 20px;
+  right: 24px;
 }
 
 .refresh-btn {
@@ -269,11 +313,11 @@
   }
 
   .left-btn {
-    left: 12px;
+    left: 16px;
   }
 
   .right-btn {
-    right: 12px;
+    right: 16px;
   }
 
   .control-btn svg {
@@ -301,7 +345,6 @@
 
   .controls-container {
     gap: 16px;
-    bottom: 45%;
   }
 
   .left-btn,
@@ -311,11 +354,11 @@
   }
 
   .left-btn {
-    left: 8px;
+    left: 12px;
   }
 
   .right-btn {
-    right: 8px;
+    right: 12px;
   }
 
   .control-btn svg {
