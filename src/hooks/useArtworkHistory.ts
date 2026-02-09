@@ -1,24 +1,33 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Artwork } from '../types/artwork';
 import { artworkAPI } from '../services/api';
+import { useAuth } from './useAuth';
 
-const HISTORY_KEY = 'artwork_history';
 const MAX_HISTORY_SIZE = 100;
 
 export function useArtworkHistory() {
   const [history, setHistory] = useState<Artwork[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [isLoading, setIsLoading] = useState(false);
+  const { userId } = useAuth();
+
+  const historyKey = useMemo(
+    () => `artwork_history_${userId ?? 'guest'}`,
+    [userId]
+  );
 
   // Load history from localStorage
   useEffect(() => {
     const loadHistory = () => {
       try {
-        const stored = localStorage.getItem(HISTORY_KEY);
+        const stored = localStorage.getItem(historyKey);
         if (stored) {
           const parsed = JSON.parse(stored) as Artwork[];
           setHistory(parsed);
           setCurrentIndex(parsed.length - 1);
+        } else {
+          setHistory([]);
+          setCurrentIndex(-1);
         }
       } catch (error) {
         console.error('Failed to load history from localStorage:', error);
@@ -26,13 +35,13 @@ export function useArtworkHistory() {
     };
 
     loadHistory();
-  }, []);
+  }, [historyKey]);
 
   // Optional: sync history from backend
   useEffect(() => {
     const syncFromBackend = async () => {
       try {
-        const serverHistory = await artworkAPI.getHistory();
+        const serverHistory = await artworkAPI.getHistory(10, userId ?? undefined);
         if (serverHistory.length > 0) {
           // Merge local and server history, deduplicate
           const merged = mergeHistories(history, serverHistory);
@@ -49,16 +58,16 @@ export function useArtworkHistory() {
     if (history.length === 0) {
       syncFromBackend();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [history.length, userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Save to localStorage
   const saveToLocalStorage = useCallback((newHistory: Artwork[]) => {
     try {
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
+      localStorage.setItem(historyKey, JSON.stringify(newHistory));
     } catch (error) {
       console.error('Failed to save history to localStorage:', error);
     }
-  }, []);
+  }, [historyKey]);
 
   // Add new artwork to history
   const addToHistory = useCallback((artwork: Artwork) => {
@@ -87,8 +96,6 @@ export function useArtworkHistory() {
 
     setCurrentIndex((prev) => Math.min(prev + 1, MAX_HISTORY_SIZE - 1));
 
-    // Record view in background
-    artworkAPI.recordView(artwork);
   }, [currentIndex, saveToLocalStorage]);
 
   // Fetch next random artwork
