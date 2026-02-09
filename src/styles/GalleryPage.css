@@ -89,6 +89,17 @@
   color: #6b7280;
 }
 
+.gallery-state button {
+  margin-top: 16px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #111827;
+  background: #111827;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .favorites-title {
   font-family: 'Playfair Display', 'Times New Roman', serif;
   font-weight: 700;
