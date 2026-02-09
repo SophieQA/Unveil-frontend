@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { artworkAPI } from '../services/api';
+import { artworkAPI, isApiError } from '../services/api';
 import { useArtworkHistory } from '../hooks/useArtworkHistory';
 import type { Artwork } from '../types/artwork';
 import ImageViewer from '../components/ImageViewer.tsx';
+import { useAuth } from '../hooks/useAuth';
 import '../styles/ArtworkDisplayPage.css';
 
 export default function ArtworkDisplayPage() {
@@ -12,8 +13,13 @@ export default function ArtworkDisplayPage() {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [isBrowsingHistory, setIsBrowsingHistory] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [displayMode, setDisplayMode] = useState<'default' | 'minimal'>(() => {
+    if (typeof window === 'undefined') return 'default';
+    return (window.localStorage.getItem('displayMode') as 'default' | 'minimal') || 'default';
+  });
   const hasLoadedInitialArtwork = useRef(false);
   const lastNavDirection = useRef<'prev' | 'next' | null>(null);
+  const { isLoggedIn, userId, openAuthDialog, logout } = useAuth();
 
   const {
     history,
@@ -30,18 +36,17 @@ export default function ArtworkDisplayPage() {
     try {
       setIsLoading(true);
       setError(null);
-      const artwork = await artworkAPI.getRandomArtwork();
+      const artwork = await artworkAPI.getRandomArtwork({ userId: userId ?? undefined });
       setCurrentArtwork(artwork);
       addToHistory(artwork);
-      artworkAPI.recordView(artwork);
       setIsBrowsingHistory(false);
-      setIsFavorited(false);
+      setIsFavorited(Boolean(artwork.isFavorited));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load artwork');
     } finally {
       setIsLoading(false);
     }
-  }, [addToHistory]);
+  }, [addToHistory, userId]);
 
   // Load initial random artwork
   useEffect(() => {
@@ -51,12 +56,11 @@ export default function ArtworkDisplayPage() {
       try {
         setIsLoading(true);
         setError(null);
-        const artwork = await artworkAPI.getRandomArtwork();
+        const artwork = await artworkAPI.getRandomArtwork({ userId: userId ?? undefined });
         setCurrentArtwork(artwork);
         addToHistory(artwork);
-        artworkAPI.recordView(artwork);
         setIsBrowsingHistory(false);
-        setIsFavorited(false);
+        setIsFavorited(Boolean(artwork.isFavorited));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load artwork');
       } finally {
@@ -65,7 +69,7 @@ export default function ArtworkDisplayPage() {
     };
 
     loadInitialArtwork();
-  }, [addToHistory]);
+  }, [addToHistory, userId]);
 
   const handlePreviousClick = useCallback(() => {
     lastNavDirection.current = 'prev';
@@ -97,33 +101,52 @@ export default function ArtworkDisplayPage() {
   useEffect(() => {
     if (currentIndex >= 0 && history[currentIndex]) {
       setCurrentArtwork(history[currentIndex]);
-      setIsFavorited(false);
+      setIsFavorited(Boolean(history[currentIndex].isFavorited));
     }
   }, [currentIndex, history]);
 
   const handleFavoriteToggle = useCallback(async () => {
     if (!currentArtwork) return;
+    if (!isLoggedIn) {
+      openAuthDialog('login');
+      return;
+    }
     const favoriteKey = currentArtwork.artworkId ?? currentArtwork.id;
-    console.log('Toggling favorite:', {
-      artwork: currentArtwork,
-      favoriteKey,
-      currentState: isFavorited,
-    });
     try {
       if (isFavorited) {
-        await artworkAPI.removeFavorite(favoriteKey);
+        await artworkAPI.removeFavorite(favoriteKey, userId ?? undefined);
         setIsFavorited(false);
-        console.log('Favorite removed successfully');
       } else {
-        await artworkAPI.addFavorite(favoriteKey);
+        await artworkAPI.addFavorite(favoriteKey, userId ?? undefined);
         setIsFavorited(true);
-        console.log('Favorite added successfully');
       }
     } catch (err) {
+      if (isApiError(err)) {
+        if (err.status === 409) {
+          setIsFavorited(true);
+          alert('Already favorited');
+          return;
+        }
+        if (err.status === 401) {
+          logout();
+          openAuthDialog('login');
+          return;
+        }
+      }
       console.error('Failed to update favorite:', err);
       alert('Failed to update favorite');
     }
-  }, [currentArtwork, isFavorited]);
+  }, [currentArtwork, isFavorited, isLoggedIn, logout, openAuthDialog, userId]);
+
+  const handleDisplayModeToggle = () => {
+    setDisplayMode((prev) => {
+      const next = prev === 'default' ? 'minimal' : 'default';
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('displayMode', next);
+      }
+      return next;
+    });
+  };
 
   const handleLoad = () => {
     if (currentArtwork && bgImageRef.current) {
@@ -163,7 +186,7 @@ export default function ArtworkDisplayPage() {
   }, [isViewerOpen, isBrowsingHistory, isAtEnd, handleNextClick, handlePreviousClick]);
 
   return (
-    <div className="artwork-display-page">
+    <div className={`artwork-display-page ${displayMode === 'minimal' ? 'minimal' : ''}`}>
       {/* Background with artwork image */}
       <div
         ref={bgImageRef}
@@ -173,6 +196,7 @@ export default function ArtworkDisplayPage() {
             ? `url('${currentArtwork.imageUrl}')`
             : 'none',
         }}
+        onClick={() => currentArtwork && setIsViewerOpen(true)}
         onLoad={handleLoad}
       />
 
@@ -183,6 +207,14 @@ export default function ArtworkDisplayPage() {
       <header className="header">
         <h1 className="logo">Unveil</h1>
       </header>
+
+      <button
+        className="display-mode-toggle"
+        onClick={handleDisplayModeToggle}
+        type="button"
+      >
+        {displayMode === 'default' ? 'Only Artwork' : 'Default View'}
+      </button>
 
       {/* Main content - centered title and artist */}
       <main className="main-content">
