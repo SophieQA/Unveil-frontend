@@ -5,6 +5,7 @@ export interface Artwork {
   artist: string;
   imageUrl: string;
   museumSource: string;
+  isFavorited?: boolean;
   year?: string;
   description?: string;
   viewedAt?: string;
@@ -22,6 +23,7 @@ export interface ArtworkResponse {
 
 export interface ViewRecordRequest {
   artworkId: string;
+  userId?: string;
   title: string;
   artist: string;
   imageUrl: string;
