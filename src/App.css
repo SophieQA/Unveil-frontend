@@ -43,3 +43,12 @@
   color: #111;
   background: #fff;
 }
+
+.app-nav .login-btn {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+}
+
+.app-nav .login-btn:hover {
+  background: #fff;
+}
