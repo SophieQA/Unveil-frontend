@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Artwork } from '../types/artwork';
-import { artworkAPI } from '../services/api';
+import { artworkAPI, isApiError } from '../services/api';
 import ArtworkCard from '../components/ArtworkCard';
 import ImageViewer from '../components/ImageViewer';
+import { useAuth } from '../hooks/useAuth';
 import '../styles/GalleryPage.css';
 
 const PAGE_SIZE = 24;
@@ -14,7 +15,7 @@ export default function FavoritesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
-  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const { isLoggedIn, userId, openAuthDialog, logout } = useAuth();
 
   const totalPages = useMemo(() => {
     if (!total) return 1;
@@ -25,19 +26,30 @@ export default function FavoritesPage() {
     try {
       setIsLoading(true);
       setError(null);
+      if (!isLoggedIn) {
+        setItems([]);
+        setTotal(0);
+        return;
+      }
       const response = await artworkAPI.getFavorites({
+        userId: userId ?? undefined,
         page,
         limit: PAGE_SIZE,
       });
       setItems(response.items);
       setTotal(response.total);
     } catch (err) {
+      if (isApiError(err) && err.status === 401) {
+        logout();
+        openAuthDialog('login');
+        return;
+      }
       console.error('Failed to load favorites:', err);
       setError(err instanceof Error ? err.message : 'Failed to load favorites');
     } finally {
       setIsLoading(false);
     }
-  }, [page]);
+  }, [isLoggedIn, logout, openAuthDialog, page, userId]);
 
   useEffect(() => {
     void loadFavorites();
@@ -46,34 +58,22 @@ export default function FavoritesPage() {
   const removeFavorite = async (artwork: Artwork) => {
     const favoriteKey = artwork.artworkId ?? artwork.id;
     try {
-      await artworkAPI.removeFavorite(favoriteKey);
+      await artworkAPI.removeFavorite(favoriteKey, userId ?? undefined);
       setItems((prev) => prev.filter((item) => (item.artworkId ?? item.id) !== favoriteKey));
       setTotal((prev) => Math.max(0, prev - 1));
     } catch (err) {
+      if (isApiError(err) && err.status === 401) {
+        logout();
+        openAuthDialog('login');
+        return;
+      }
       console.error('Failed to remove favorite:', err);
       alert('Failed to remove favorite');
     }
   };
 
-  const viewArtworkDetails = async (artwork: Artwork) => {
-    const artworkId = artwork.artworkId ?? artwork.id;
-    setIsLoadingDetails(true);
-    
-    try {
-      const details = await artworkAPI.getArtworkDetails(artworkId);
-      
-      if (!details) {
-        alert('尚无历史记录 - No historical record found for this artwork');
-        return;
-      }
-      
-      setSelectedArtwork(details);
-    } catch (err) {
-      console.error('Failed to fetch artwork details:', err);
-      alert('Failed to load artwork details');
-    } finally {
-      setIsLoadingDetails(false);
-    }
+  const viewArtworkDetails = (artwork: Artwork) => {
+    setSelectedArtwork(artwork);
   };
 
   return (
@@ -94,7 +94,14 @@ export default function FavoritesPage() {
         </div>
       </header>
 
-      {isLoading ? (
+      {!isLoggedIn ? (
+        <div className="gallery-state">
+          Please log in to view your favorites.
+          <button type="button" onClick={() => openAuthDialog('login')}>
+            Login
+          </button>
+        </div>
+      ) : isLoading ? (
         <div className="gallery-state">Loading favorites...</div>
       ) : error ? (
         <div className="gallery-state">{error}</div>
@@ -132,10 +139,6 @@ export default function FavoritesPage() {
           Next
         </button>
       </div>
-
-      {isLoadingDetails && (
-        <div className="gallery-state">Loading artwork details...</div>
-      )}
 
       {selectedArtwork && (
         <ImageViewer
