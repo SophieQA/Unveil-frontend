@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Artwork } from '../types/artwork';
-import { artworkAPI } from '../services/api';
+import { artworkAPI, isApiError } from '../services/api';
 import ArtworkCard from '../components/ArtworkCard';
 import ImageViewer from '../components/ImageViewer';
+import { useAuth } from '../hooks/useAuth';
 import '../styles/GalleryPage.css';
 
 const PAGE_SIZE = 24;
 
 export default function ArchivePage() {
   const [items, setItems] = useState<Artwork[]>([]);
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [queryInput, setQueryInput] = useState('');
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
@@ -17,6 +17,7 @@ export default function ArchivePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
+  const { isLoggedIn, userId, openAuthDialog, logout } = useAuth();
 
   const totalPages = useMemo(() => {
     if (!total) return 1;
@@ -27,7 +28,13 @@ export default function ArchivePage() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await artworkAPI.getArchive({
+      if (!isLoggedIn) {
+        setItems([]);
+        setTotal(0);
+        return;
+      }
+      const response = await artworkAPI.getUserArchive({
+        userId: userId ?? undefined,
         query: query || undefined,
         page,
         limit: PAGE_SIZE,
@@ -35,29 +42,20 @@ export default function ArchivePage() {
       setItems(response.items);
       setTotal(response.total);
     } catch (err) {
+      if (isApiError(err) && err.status === 401) {
+        logout();
+        openAuthDialog('login');
+        return;
+      }
       setError(err instanceof Error ? err.message : 'Failed to load archive');
     } finally {
       setIsLoading(false);
     }
-  }, [page, query]);
-
-  const loadFavorites = useCallback(async () => {
-    try {
-      const response = await artworkAPI.getFavorites({ page: 1, limit: 200 });
-      const ids = new Set(response.items.map((item) => item.artworkId ?? item.id));
-      setFavorites(ids);
-    } catch (err) {
-      console.warn('Failed to load favorites:', err);
-    }
-  }, []);
+  }, [isLoggedIn, logout, openAuthDialog, page, query, userId]);
 
   useEffect(() => {
     void loadArchive();
   }, [loadArchive]);
-
-  useEffect(() => {
-    void loadFavorites();
-  }, [loadFavorites]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,21 +64,51 @@ export default function ArchivePage() {
   };
 
   const toggleFavorite = async (artwork: Artwork) => {
+    if (!isLoggedIn) {
+      openAuthDialog('login');
+      return;
+    }
     const favoriteKey = artwork.artworkId ?? artwork.id;
-    const isFavorited = favorites.has(favoriteKey);
+    const isFavorited = Boolean(artwork.isFavorited);
     try {
       if (isFavorited) {
-        await artworkAPI.removeFavorite(favoriteKey);
-        setFavorites((prev) => {
-          const next = new Set(prev);
-          next.delete(favoriteKey);
-          return next;
-        });
+        await artworkAPI.removeFavorite(favoriteKey, userId ?? undefined);
+        setItems((prev) =>
+          prev.map((item) =>
+            (item.artworkId ?? item.id) === favoriteKey
+              ? { ...item, isFavorited: false }
+              : item
+          )
+        );
       } else {
-        await artworkAPI.addFavorite(favoriteKey);
-        setFavorites((prev) => new Set(prev).add(favoriteKey));
+        await artworkAPI.addFavorite(favoriteKey, userId ?? undefined);
+        setItems((prev) =>
+          prev.map((item) =>
+            (item.artworkId ?? item.id) === favoriteKey
+              ? { ...item, isFavorited: true }
+              : item
+          )
+        );
       }
     } catch (err) {
+      if (isApiError(err)) {
+        if (err.status === 409) {
+          setItems((prev) =>
+            prev.map((item) =>
+              (item.artworkId ?? item.id) === favoriteKey
+                ? { ...item, isFavorited: true }
+                : item
+            )
+          );
+          alert('Already favorited');
+          return;
+        }
+        if (err.status === 401) {
+          logout();
+          openAuthDialog('login');
+          return;
+        }
+      }
       console.error('Failed to update favorite:', err);
       alert('Failed to update favorite');
     }
@@ -106,7 +134,14 @@ export default function ArchivePage() {
         </form>
       </header>
 
-      {isLoading ? (
+      {!isLoggedIn ? (
+        <div className="gallery-state">
+          Please log in to view your archive.
+          <button type="button" onClick={() => openAuthDialog('login')}>
+            Login
+          </button>
+        </div>
+      ) : isLoading ? (
         <div className="gallery-state">Loading archive...</div>
       ) : error ? (
         <div className="gallery-state">{error}</div>
@@ -121,10 +156,10 @@ export default function ArchivePage() {
               onView={setSelectedArtwork}
               onPrimaryAction={toggleFavorite}
               primaryActionLabel={
-                favorites.has(artwork.artworkId ?? artwork.id) ? 'Remove favorite' : 'Add favorite'
+                artwork.isFavorited ? 'Remove favorite' : 'Add favorite'
               }
               primaryActionType="favorite"
-              isActive={favorites.has(artwork.artworkId ?? artwork.id)}
+              isActive={Boolean(artwork.isFavorited)}
             />
           ))}
         </div>
