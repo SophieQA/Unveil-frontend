@@ -100,11 +100,6 @@
   font-weight: 600;
 }
 
-.favorites-title {
-  font-family: 'Playfair Display', 'Times New Roman', serif;
-  font-weight: 700;
-}
-
 .favorites-icon {
   display: inline-flex;
   width: 36px;
