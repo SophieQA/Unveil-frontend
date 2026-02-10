@@ -121,10 +121,10 @@
 
 .view-full-btn {
   background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(153, 152, 152, 0.5);
   color: #fff;
   padding: 12px 28px;
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -146,12 +146,12 @@
 }
 
 .favorite-btn {
-  width: 64px;
-  height: 64px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(139, 138, 138, 0.9);
   background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  color: #e9e6e6;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -282,10 +282,6 @@
 
 .right-btn {
   right: 24px;
-}
-
-.refresh-btn {
-  /* Refresh button styling can be customized if needed */
 }
 
 /* Responsive Design */
