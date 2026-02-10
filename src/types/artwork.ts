@@ -14,6 +14,8 @@ export interface Artwork {
   medium?: string;
   dimensions?: string;
   creditLine?: string;
+  galleryNumber?: string;
+  galleryLabel?: string;
 }
 
 export interface ArtworkResponse {

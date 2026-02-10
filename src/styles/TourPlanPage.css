@@ -1,0 +1,724 @@
+.tour-plan-page {
+  min-height: 100vh;
+  background: #f8f8f6;
+  color: #111827;
+  padding: 120px 48px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.tour-plan-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.tour-plan-hero h1 {
+  font-size: 48px;
+  margin: 8px 0 12px;
+}
+
+.tour-plan-eyebrow {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #6b7280;
+}
+
+.tour-plan-subtitle {
+  max-width: 560px;
+  color: #4b5563;
+}
+
+.tour-plan-date {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+}
+
+.tour-plan-date input {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.tour-plan-tabs {
+  display: inline-flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  width: fit-content;
+}
+
+.tour-plan-tabs button {
+  border: none;
+  background: transparent;
+  color: #111827;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.tour-plan-tabs button.active {
+  background: #111827;
+  color: #ffffff;
+}
+
+.tour-plan-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+
+.tour-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tour-card h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.tour-card-text {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.tour-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tour-links a {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.tour-card-block {
+  font-size: 14px;
+  color: #374151;
+}
+
+.tour-highlight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #f3f4f6;
+  font-size: 14px;
+}
+
+.tour-highlight a {
+  color: #111827;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tour-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.tour-card-caption {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.tour-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tour-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #f9fafb;
+}
+
+.tour-item-time {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.tour-item h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.tour-item-meta {
+  font-size: 13px;
+  color: #4b5563;
+  margin-top: 4px;
+}
+
+.tour-item-desc {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 6px;
+}
+
+.tour-add-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #111827;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.tour-add-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.tour-card-state {
+  color: #6b7280;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: #ffffff;
+}
+
+.my-plan {
+  padding: 24px;
+}
+
+.route-btn {
+  border: none;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.route-btn-bottom {
+  align-self: stretch;
+  padding: 12px 18px;
+}
+
+.my-plan-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+  width: 100%;
+  height: calc(100vh - 280px);
+  overflow: hidden;
+}
+
+.my-plan-map {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  height: 100%;
+}
+
+.map-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+}
+
+.map-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.map-search-bar {
+  width: 100%;
+}
+
+.map-search {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.map-search input {
+  flex: 1;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+}
+
+.map-search button {
+  border: none;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.floor-switch {
+  display: flex;
+  gap: 8px;
+}
+
+.floor-switch button {
+  border: 1px solid #111827;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 999px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.floor-switch button:hover {
+  background: #f9fafb;
+}
+
+.floor-switch button.active {
+  background: #111827;
+  color: #ffffff;
+}
+
+.floor-switch button {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.floor-switch button.active {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
+
+.map-stage {
+  position: relative;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  min-height: 300px;
+  max-height: 520px;
+  max-width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  align-self: flex-start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+}
+
+.map-stage.is-panning {
+  cursor: grabbing;
+}
+
+.map-canvas {
+  position: relative;
+  width: max-content;
+  height: max-content;
+}
+
+.map-image {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.map-route {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.map-markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.map-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #111827;
+  background: #ffffff;
+  color: #111827;
+  font-size: 12px;
+  font-weight: 700;
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.map-marker.search-marker {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.map-artwork-card {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+  background: #111827;
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.map-artwork-card img {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  max-height: 180px;
+}
+
+.map-artwork-card button {
+  border: none;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  justify-self: flex-start;
+}
+
+.map-fallback {
+  padding: 24px;
+  color: #6b7280;
+}
+
+.map-zoom-controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 5;
+}
+
+.map-zoom-controls button {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(17, 24, 39, 0.12);
+}
+
+.map-zoom-controls button:hover {
+  background: #f3f4f6;
+}
+
+.my-plan-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* 收藏的艺术品位置列表 */
+.favorites-location-list {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.favorites-location-list h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #111827;
+}
+
+.favorites-location-list .empty-state {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+
+.location-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.location-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.location-item:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.location-item svg {
+  flex-shrink: 0;
+  color: #ef4444;
+}
+
+.location-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.location-item strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.location-item span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* 艺术作品详情卡片 */
+.artwork-detail-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.08);
+}
+
+.artwork-detail-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: #111827;
+}
+
+.artwork-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #6b7280;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.artwork-close:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.artwork-image {
+  width: 100%;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.artwork-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 280px;
+  object-fit: contain;
+}
+
+.artwork-info h4 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #111827;
+}
+
+.artwork-artist {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 6px 0;
+}
+
+.artwork-year {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0 0 12px 0;
+}
+
+.artwork-gallery {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #ef4444;
+  font-weight: 500;
+  margin: 0;
+}
+
+.artwork-gallery svg {
+  flex-shrink: 0;
+}
+
+/* 我的行程 */
+.my-itinerary {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.my-itinerary h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #111827;
+}
+
+.my-itinerary .empty-state {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.my-itinerary .route-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+}
+
+.my-plan-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.plan-item {
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #f9fafb;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.plan-time {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.plan-remove {
+  border: none;
+  background: #ef4444;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.route-summary {
+  background: #111827;
+  color: #ffffff;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 13px;
+}
+
+.tour-plan-error {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+@media (max-width: 960px) {
+  .tour-plan-page {
+    padding: 110px 24px 48px;
+  }
+
+  .my-plan-layout {
+    grid-template-columns: 1fr;
+  }
+}

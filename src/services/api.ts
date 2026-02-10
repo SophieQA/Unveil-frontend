@@ -5,6 +5,12 @@ import type {
   FavoriteRequest,
   FavoritesResponse,
 } from '../types/artwork';
+import type {
+  GalleryLocationDto,
+  PlanItemDto,
+  RouteResponse,
+  TourEventDto,
+} from '../types/tourPlan';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:10000';
 const USER_ID = import.meta.env.VITE_USER_ID || 'user123';
@@ -373,6 +379,8 @@ function normalizeArtwork(raw: unknown): Artwork {
   const isFavorited = Boolean(
     record.isFavorited ?? record.is_favorited ?? record.favorited ?? false
   );
+  const galleryNumber = record.galleryNumber ?? record.gallery_number ?? record.gallery;
+  const galleryLabel = record.galleryLabel ?? record.gallery_label ?? record.galleryName;
 
   return {
     id,
@@ -389,5 +397,100 @@ function normalizeArtwork(raw: unknown): Artwork {
     medium: record.medium ? String(record.medium) : undefined,
     dimensions: record.dimensions ? String(record.dimensions) : undefined,
     creditLine: record.creditLine ? String(record.creditLine) : undefined,
+    galleryNumber: galleryNumber ? String(galleryNumber).replace(/\D+/g, '') : undefined,
+    galleryLabel: galleryLabel ? String(galleryLabel) : undefined,
   };
 }
+
+export const tourPlanAPI = {
+  async getTours(params: { date: string; userId?: string }): Promise<TourEventDto[]> {
+    const { date, userId } = params;
+    const response = await fetch(
+      `${API_BASE_URL}/api/tour-plan/tours${buildQueryString({ date, userId })}`,
+      { headers: getHeaders(userId) }
+    );
+    if (!response.ok) {
+      throw await toApiError(response, 'Failed to load tours');
+    }
+    return response.json();
+  },
+
+  async getEvents(params: { date: string; userId?: string }): Promise<TourEventDto[]> {
+    const { date, userId } = params;
+    const response = await fetch(
+      `${API_BASE_URL}/api/tour-plan/events${buildQueryString({ date, userId })}`,
+      { headers: getHeaders(userId) }
+    );
+    if (!response.ok) {
+      throw await toApiError(response, 'Failed to load events');
+    }
+    return response.json();
+  },
+
+  async getMyPlan(userId: string): Promise<PlanItemDto[]> {
+    const response = await fetch(`${API_BASE_URL}/api/tour-plan/my-plan/${userId}`, {
+      headers: getHeaders(userId),
+    });
+    if (!response.ok) {
+      throw await toApiError(response, 'Failed to load plan');
+    }
+    return response.json();
+  },
+
+  async addToPlan(userId: string, tourEventId: number): Promise<PlanItemDto> {
+    const response = await fetch(`${API_BASE_URL}/api/tour-plan/my-plan/${userId}/items`, {
+      method: 'POST',
+      headers: getHeaders(userId),
+      body: JSON.stringify({ tourEventId }),
+    });
+    if (!response.ok) {
+      throw await toApiError(response, 'Failed to add to plan');
+    }
+    return response.json();
+  },
+
+  async removeFromPlan(userId: string, tourEventId: number): Promise<void> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/tour-plan/my-plan/${userId}/items/${tourEventId}`,
+      {
+        method: 'DELETE',
+        headers: getHeaders(userId),
+      }
+    );
+    if (!response.ok) {
+      throw await toApiError(response, 'Failed to remove from plan');
+    }
+  },
+};
+
+export const galleryAPI = {
+  async getGalleryByNumber(galleryNumber: string): Promise<GalleryLocationDto> {
+    const response = await fetch(`${API_BASE_URL}/api/galleries/${galleryNumber}`, {
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw await toApiError(response, 'Failed to load gallery location');
+    }
+    return response.json();
+  },
+
+  async getGalleriesByFloor(floor: string): Promise<GalleryLocationDto[]> {
+    const response = await fetch(`${API_BASE_URL}/api/galleries/floor/${floor}`, {
+      headers: getHeaders(),
+    });
+    if (!response.ok) {
+      throw await toApiError(response, 'Failed to load galleries');
+    }
+    return response.json();
+  },
+
+  async getRoute(userId: string): Promise<RouteResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/galleries/route/${userId}`, {
+      headers: getHeaders(userId),
+    });
+    if (!response.ok) {
+      throw await toApiError(response, 'Failed to generate route');
+    }
+    return response.json();
+  },
+};
