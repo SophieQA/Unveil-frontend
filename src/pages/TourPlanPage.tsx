@@ -15,7 +15,7 @@ const FLOOR_IMAGES: Record<string, string> = {
   '2': '/maps/floor2.png',
 };
 
-const MET_HIGHLIGHT_LINK = 'https://www.metmuseum.org/audio-guide';
+const MET_HIGHLIGHT_LINK = 'https://www.metmuseum.org/audio-guide/playlists/100-highlights-tour';
 const TICKETS_LINK = 'https://engage.metmuseum.org/admission/?promocode=59559';
 const VISITOR_GUIDELINES_LINK = 'https://www.metmuseum.org/policies/visitor-guidelines';
 
@@ -67,6 +67,7 @@ export default function TourPlanPage() {
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showAIRoute, setShowAIRoute] = useState(false);
   const mapCanvasRef = useRef<HTMLDivElement>(null);
   const mapStageRef = useRef<HTMLDivElement>(null);
 
@@ -417,7 +418,7 @@ export default function TourPlanPage() {
       <section className="tour-plan-content">
         {activeTab === 'prep' && (
           <section className="tour-card">
-            <h2>Trip prep</h2>
+            <h2>The Met</h2>
             <p className="tour-card-text">
               The Metropolitan Museum of Art is one of the world’s most renowned art institutions, spanning 5,000 years of creativity.
             </p>
@@ -550,7 +551,12 @@ export default function TourPlanPage() {
                       onChange={(event) => setSearchInput(event.target.value)}
                       placeholder="Search The Met"
                     />
-                    <button type="submit">Search</button>
+                    <button type="submit" aria-label="Search">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                      </svg>
+                    </button>
                   </form>
                 </div>
 
@@ -750,7 +756,7 @@ export default function TourPlanPage() {
                             className="plan-remove"
                             onClick={() => handleRemoveFromPlan(item.tourEventId)}
                           >
-                            Remove
+                            ×
                           </button>
                         </div>
                       ))}
@@ -759,11 +765,24 @@ export default function TourPlanPage() {
                 </div>
 
                 {/* AI 路线按钮 */}
-                <button type="button" className="route-btn" onClick={handleGenerateRoute}>
-                  AI Route
+                <button 
+                  type="button" 
+                  className={`route-btn route-btn-toggle ${showAIRoute ? 'active' : ''}`}
+                  onClick={() => {
+                    if (!showAIRoute && !routeData) {
+                      handleGenerateRoute();
+                    }
+                    setShowAIRoute(!showAIRoute);
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>          
+                  </svg>
+                  {showAIRoute ? 'Hide AI Route' : 'Show AI Route'}
                 </button>
 
-                {routeData && (
+                {showAIRoute && routeData && (
                   <div className="route-summary">
                     <h4>AI Route Summary</h4>
                     <p>{routeData.estimatedDuration}</p>
