@@ -40,12 +40,12 @@
 /* Close Button */
 .close-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 18px;
+  right: 18px;
   background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   color: #fff;
-  width: 40px;
+  width: 4px;
   height: 40px;
   border-radius: 50%;
   cursor: pointer;
@@ -61,11 +61,6 @@
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.8);
-  transform: rotate(90deg);
-}
-
-.close-btn:active {
-  transform: rotate(90deg) scale(0.95);
 }
 
 /* Viewer Controls */

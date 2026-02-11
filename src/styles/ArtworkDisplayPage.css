@@ -103,7 +103,7 @@
 }
 
 .artwork-title {
-  font-size: 48px;
+  font-size: 45px;
   font-weight: 700;
   color: #fff;
   margin: 0 0 12px 0;
@@ -112,11 +112,11 @@
 }
 
 .artwork-artist {
-  font-size: 24px;
-  color: #e0e0e0;
+  color: #c4c4c4 !important;
+  font-size: 12px !important;
   margin: 0 0 24px 0;
   font-weight: 300;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  /* text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); */
 }
 
 .view-full-btn {
@@ -136,7 +136,7 @@
 .view-full-btn:hover {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.8);
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
 }
 
@@ -194,7 +194,7 @@
   padding: 8px 14px;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   backdrop-filter: blur(8px);
 }
@@ -229,7 +229,7 @@
 /* Control Buttons */
 .control-btn {
   background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(183, 181, 181, 0.4);
   color: #fff;
   width: 52px;
   height: 52px;

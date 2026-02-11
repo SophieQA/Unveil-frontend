@@ -211,7 +211,7 @@ export default function ImageViewer({ artwork, onClose }: ImageViewerProps) {
             className="control-btn download-btn"
             title="Download image (or long press on image)"
           >
-            ⬇ Download
+            ⬇
           </button>
         </div>
 
