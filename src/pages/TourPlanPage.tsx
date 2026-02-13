@@ -56,6 +56,17 @@ export default function TourPlanPage() {
   const [searchLocation, setSearchLocation] = useState<GalleryLocationDto | null>(null);
   const [routeData, setRouteData] = useState<RouteResponse | null>(null);
   const [selectedFloor, setSelectedFloor] = useState('1');
+  const handleFloorSwitch = (floor: string) => {
+    setSelectedFloor(floor);
+    setTimeout(() => {
+      if (mapImgRef.current) {
+        setMapSize({
+          width: mapImgRef.current.clientWidth,
+          height: mapImgRef.current.clientHeight,
+        });
+      }
+    }, 0);
+  };
   const [mapScale, setMapScale] = useState(1);
   const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -70,18 +81,38 @@ export default function TourPlanPage() {
   const [showAIRoute, setShowAIRoute] = useState(false);
   const mapCanvasRef = useRef<HTMLDivElement>(null);
   const mapStageRef = useRef<HTMLDivElement>(null);
+  const mapImgRef = useRef<HTMLImageElement>(null);
 
+  // 监听 mapStageRef 尺寸变化
   useEffect(() => {
-    if (!mapStageRef.current) return;
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (entry) {
-        setMapStageSize({ width: entry.contentRect.width, height: entry.contentRect.height });
+    if (!mapImgRef.current) return;
+    const observer = new window.ResizeObserver(() => {
+      if (mapImgRef.current) {
+        setMapSize({
+          width: mapImgRef.current.clientWidth,
+          height: mapImgRef.current.clientHeight,
+        });
       }
     });
-    observer.observe(mapStageRef.current);
+    observer.observe(mapImgRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [selectedFloor]);
+
+
+  // 监听图片实际渲染尺寸变化
+  useEffect(() => {
+    function updateMapSize() {
+      if (mapImgRef.current) {
+        setMapSize({
+          width: mapImgRef.current.clientWidth,
+          height: mapImgRef.current.clientHeight,
+        });
+      }
+    }
+    updateMapSize();
+    window.addEventListener('resize', updateMapSize);
+    return () => window.removeEventListener('resize', updateMapSize);
+  }, [selectedFloor]);
 
   const mapBaseScale = useMemo(() => {
     const natural = mapNaturalSize[selectedFloor];
@@ -184,6 +215,16 @@ export default function TourPlanPage() {
     void loadFavoritesAndGalleries();
   }, [isLoggedIn, userId]);
 
+  useEffect(() => {
+    // 组件挂载时，若图片已渲染且尺寸有效，立即设置 mapSize
+    if (mapImgRef.current && mapImgRef.current.clientWidth > 0) {
+      setMapSize({
+        width: mapImgRef.current.clientWidth,
+        height: mapImgRef.current.clientHeight,
+      });
+    }
+  }, []);
+  
   const plannedIds = useMemo(
     () => new Set(planItems.map((item) => item.tourEventId)),
     [planItems]
@@ -326,15 +367,8 @@ export default function TourPlanPage() {
     const natural = mapNaturalSize[selectedFloor];
     const display = axis === 'x' ? mapSize.width : mapSize.height;
     const naturalValue = axis === 'x' ? natural?.width : natural?.height;
-
-    if (!display) return 0;
-    if (value <= 1) {
-      return value * display;
-    }
-    if (naturalValue) {
-      return (value / naturalValue) * display;
-    }
-    return value;
+    if (!display || !naturalValue) return 0;
+    return (value / naturalValue) * display;
   };
 
   const mapImageSrc = FLOOR_IMAGES[selectedFloor];
@@ -535,7 +569,7 @@ export default function TourPlanPage() {
                         key={floor}
                         type="button"
                         className={selectedFloor === floor ? 'active' : ''}
-                        onClick={() => setSelectedFloor(floor)}
+                        onClick={() => handleFloorSwitch(floor)}
                       >
                         Floor {floor}
                       </button>
@@ -578,6 +612,7 @@ export default function TourPlanPage() {
                   >
                     {hasMapImage ? (
                       <img
+                        ref={mapImgRef}
                         src={mapImageSrc}
                         alt={`The Met floor ${selectedFloor}`}
                         className="map-image"
@@ -586,7 +621,6 @@ export default function TourPlanPage() {
                         }}
                         onLoad={(event) => {
                           const target = event.currentTarget;
-                          if (!target) return;
                           if (!target.naturalWidth || !target.naturalHeight) return;
                           setMapNaturalSize((prev) => ({
                             ...prev,
@@ -595,6 +629,12 @@ export default function TourPlanPage() {
                               height: target.naturalHeight,
                             },
                           }));
+                          setTimeout(() => {
+                            setMapSize({
+                              width: target.clientWidth,
+                              height: target.clientHeight,
+                            });
+                          }, 0);
                         }}
                       />
                     ) : (
@@ -622,7 +662,7 @@ export default function TourPlanPage() {
                       })}
                     </svg>
                     <div className="map-markers">
-                      {displayMarkers.map(({ artwork, location }) => {
+                       {mapSize.width > 0 && mapSize.height > 0 && displayMarkers.map(({ artwork, location }) => {
                         const left = getDisplayCoordinate(location.xCoordinate, 'x');
                         const top = getDisplayCoordinate(location.yCoordinate, 'y');
                         const isSearch = artwork.id === 'search-marker';
