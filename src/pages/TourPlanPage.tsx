@@ -72,7 +72,7 @@ export default function TourPlanPage() {
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [mapSize, setMapSize] = useState({ width: 0, height: 0 });
-  const [mapStageSize, setMapStageSize] = useState({ width: 0, height: 0 });
+  const [mapStageSize] = useState({ width: 0, height: 0 });
   const [mapNaturalSize, setMapNaturalSize] = useState<Record<string, { width: number; height: number }>>({});
   const [mapImageError, setMapImageError] = useState<Record<string, boolean>>({});
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
