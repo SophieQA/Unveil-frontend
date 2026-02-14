@@ -16,6 +16,7 @@ const FLOOR_IMAGES: Record<string, string> = {
 };
 
 const MET_HIGHLIGHT_LINK = 'https://www.metmuseum.org/audio-guide/playlists/100-highlights-tour';
+const MET_GUIDE_1972_LINK = 'https://www.metmuseum.org/met-publications/guide-to-the-metropolitan-museum-of-art-1972';
 const TICKETS_LINK = 'https://engage.metmuseum.org/admission/?promocode=59559';
 const VISITOR_GUIDELINES_LINK = 'https://www.metmuseum.org/policies/visitor-guidelines';
 
@@ -468,13 +469,21 @@ export default function TourPlanPage() {
             </div>
             <div className="tour-card-block">
               <strong>Hours:</strong>
-              <div>Sunday–Thursday: 10:00 AM - 5:00 PM</div>
+              <div>Sunday–Tuesday: 10:00 AM - 5:00 PM</div>
+              <div>Wednesday: Closed</div>
+              <div>Thursday: 10:00 AM - 5:00 PM</div>
               <div>Friday–Saturday: 10:00 AM - 9:00 PM</div>
             </div>
             <div className="tour-highlight">
               <span>Highlight from the Met</span>
               <a href={MET_HIGHLIGHT_LINK} target="_blank" rel="noreferrer">
                 Audio Guide →
+              </a>
+            </div>
+            <div className="tour-highlight">
+              <span>A now-out-of-print 1970s Guide to the Metropolitan Museum of Art</span>
+              <a href={MET_GUIDE_1972_LINK} target="_blank" rel="noreferrer">
+                Take a Look →
               </a>
             </div>
           </section>
@@ -640,27 +649,29 @@ export default function TourPlanPage() {
                     ) : (
                       <div className="map-fallback">Map image not available.</div>
                     )}
-                    <svg className="map-route" width={mapSize.width} height={mapSize.height}>
-                      {currentRouteFloor?.pathSegments.map((segment, index) => {
-                        const x1 = getDisplayCoordinate(segment.start.xCoordinate, 'x');
-                        const y1 = getDisplayCoordinate(segment.start.yCoordinate, 'y');
-                        const x2 = getDisplayCoordinate(segment.end.xCoordinate, 'x');
-                        const y2 = getDisplayCoordinate(segment.end.yCoordinate, 'y');
-                        return (
-                          <line
-                            key={`segment-${index}`}
-                            x1={x1}
-                            y1={y1}
-                            x2={x2}
-                            y2={y2}
-                            stroke="#ef4444"
-                            strokeWidth="3"
-                            strokeDasharray="6 6"
-                            strokeLinecap="round"
-                          />
-                        );
-                      })}
-                    </svg>
+                    {showAIRoute && (
+                      <svg className="map-route" width={mapSize.width} height={mapSize.height}>
+                        {currentRouteFloor?.pathSegments.map((segment, index) => {
+                          const x1 = getDisplayCoordinate(segment.start.xCoordinate, 'x');
+                          const y1 = getDisplayCoordinate(segment.start.yCoordinate, 'y');
+                          const x2 = getDisplayCoordinate(segment.end.xCoordinate, 'x');
+                          const y2 = getDisplayCoordinate(segment.end.yCoordinate, 'y');
+                          return (
+                            <line
+                              key={`segment-${index}`}
+                              x1={x1}
+                              y1={y1}
+                              x2={x2}
+                              y2={y2}
+                              stroke="#ef4444"
+                              strokeWidth="3"
+                              strokeDasharray="6 6"
+                              strokeLinecap="round"
+                            />
+                          );
+                        })}
+                      </svg>
+                    )}
                     <div className="map-markers">
                        {mapSize.width > 0 && mapSize.height > 0 && displayMarkers.map(({ artwork, location }) => {
                         const left = getDisplayCoordinate(location.xCoordinate, 'x');
@@ -712,37 +723,6 @@ export default function TourPlanPage() {
               </div>
 
               <aside className="my-plan-sidebar">
-                {/* Favorites Location List */}
-                <div className="favorites-location-list">
-                  <h3>Favorite Artworks Locations</h3>
-                  {favoriteMarkers.length === 0 ? (
-                    <p className="empty-state">No favorites yet</p>
-                  ) : (
-                    <div className="location-items">
-                      {favoriteMarkers.map(({ artwork, location }) => (
-                        <button
-                          key={artwork.id}
-                          type="button"
-                          className="location-item"
-                          onClick={() => {
-                            setSelectedArtwork(artwork);
-                            setSelectedFloor(location.floor);
-                          }}
-                        >
-                          <svg width="16" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                            <circle cx="12" cy="9" r="2.5"/>
-                          </svg>
-                          <div>
-                            <strong>Gallery {location.galleryNumber}</strong>
-                            <span>Floor {location.floor}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
                 {/* Artwork Details Card */}
                 {selectedArtwork && (
                   <div className="artwork-detail-card">
@@ -776,6 +756,37 @@ export default function TourPlanPage() {
                     </div>
                   </div>
                 )}
+
+                {/* Favorites Location List */}
+                <div className="favorites-location-list">
+                  <h3>Favorite Artworks Locations</h3>
+                  {favoriteMarkers.length === 0 ? (
+                    <p className="empty-state">No favorites yet</p>
+                  ) : (
+                    <div className="location-items">
+                      {favoriteMarkers.map(({ artwork, location }) => (
+                        <button
+                          key={artwork.id}
+                          type="button"
+                          className="location-item"
+                          onClick={() => {
+                            setSelectedArtwork(artwork);
+                            setSelectedFloor(location.floor);
+                          }}
+                        >
+                          <svg width="16" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                            <circle cx="12" cy="9" r="2.5"/>
+                          </svg>
+                          <div>
+                            <strong>Gallery {location.galleryNumber}</strong>
+                            <span>Floor {location.floor}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 {/* My Itinerary */}
                 <div className="my-itinerary">

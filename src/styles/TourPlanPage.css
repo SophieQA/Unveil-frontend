@@ -331,6 +331,7 @@
   border: 1px solid #e5e7eb;
   padding: 8px 12px;
   background: #ffffff;
+  color: #111827;
   outline: none;
   transition: border-color 0.2s ease;
 }
